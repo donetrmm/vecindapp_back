@@ -1,15 +1,20 @@
+import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { User } from './infrastructure/database/entities/user.entity';
-import { Neighborhood } from './infrastructure/database/entities/neighborhood.entity';
+import { ConfigService } from '@nestjs/config';
+import { User } from './users/infrastructure/entities/user.entity';
+import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborhood.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
-  host: 'vecindapp.c70dxwsppzvc.us-east-1.rds.amazonaws.com',
-  port: 3306,
-  username: 'admin',
-  password: 'brandi12',
-  database: 'vecindapp',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   entities: [User, Neighborhood],
-  migrations: ['src/migrations/*.ts'], 
-  synchronize: false, 
+  migrations: ['src/migrations/*.ts'],
+  synchronize: false,
 });

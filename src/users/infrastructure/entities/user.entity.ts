@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import { Neighborhood } from './neighborhood.entity';
+import { Neighborhood } from '../../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
