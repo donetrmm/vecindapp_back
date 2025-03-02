@@ -34,7 +34,7 @@ export class NeighborhoodsController {
     return this.neighborhoodsService.getNeighborhoodsByOwner(ownerEmail);
   }
 
-  @Get()
+  @Get('residents')
   @ApiOperation({ summary: 'Obtener residentes de las vecindades del usuario' })
   @ApiResponse({ status: 200, description: 'Lista de recidentes de las vecindades del usuario.' })
   async getUserNeighborhoodsResidents(@Request() req) {
