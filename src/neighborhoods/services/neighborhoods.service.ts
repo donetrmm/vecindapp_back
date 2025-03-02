@@ -15,27 +15,54 @@ export class NeighborhoodsService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async createNeighborhood(data: {
-    nombre: string,
-    direccion: string,
-    colonia: string,
-    estado: string,
-    numeroCasas: number,
-  }, ownerEmail: string): Promise<Neighborhood> {
+  async createNeighborhood(
+    data: {
+      nombre: string;
+      direccion: string;
+      colonia: string;
+      estado: string;
+      numeroCasas: number;
+      numeroVigilantes: number;
+    },
+    ownerEmail: string
+  ): Promise<Neighborhood> {
     const owner = await this.usersRepository.findOne({ where: { email: ownerEmail } });
     if (!owner) {
       throw new Error('Propietario no encontrado');
     }
+  
+    let codigo: string;
+    let exists: Neighborhood | null;
+  
+    do {
+      codigo = this.generateUniqueCode();
+      exists = await this.neighborhoodsRepository.findOne({ where: { codigo } });
+    } while (exists); 
+  
     const neighborhood = this.neighborhoodsRepository.create({
       ...data,
+      codigo,
       owner,
     });
+  
     return this.neighborhoodsRepository.save(neighborhood);
   }
-
+  
+  private generateUniqueCode(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length: 5 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  }
+  
   async getNeighborhoodsByOwner(ownerEmail: string): Promise<Neighborhood[]> {
     return this.neighborhoodsRepository.find({
       where: { owner: { email: ownerEmail } },
+    });
+  }
+
+  async getResidentNeighborhoodsByOwner(ownerEmail: string): Promise<Neighborhood[]> {
+    return this.neighborhoodsRepository.find({
+      where: { owner: { email: ownerEmail } },
+      relations: ['residents'],
     });
   }
 

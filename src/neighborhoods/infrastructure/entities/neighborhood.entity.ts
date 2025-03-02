@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, BeforeInsert, OneToMany } from 'typeorm';
 import { User } from '../../../users/infrastructure/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Resident } from '../../../residents/infrastructure/entities/resident.entity';
 
 @Entity('neighborhoods')
 export class Neighborhood {
@@ -36,12 +37,24 @@ export class Neighborhood {
   @Column('int', { default: 0 })
   numeroCasasRegistradas: number;
 
+  @ApiProperty({ description: 'Número total vigilantes' })
+  @Column('int')
+  numeroVigilantes: number;
+
+  @ApiProperty({ description: 'Número de vigilantes registrados' })
+  @Column('int')
+  numeroVigilantesRegistados: number;
+
   @ManyToOne(() => User, user => user.neighborhoods, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ownerEmail' })
   owner: User;
 
+  @ApiProperty({ description: 'Lista de residentes en la vecindad' })
+  @OneToMany(() => Resident, (resident) => resident.neighborhood)
+  residents: Resident[];
+/*
   @BeforeInsert()
   generateCodigo() {
     this.codigo = Math.floor(10000 + Math.random() * 90000).toString(); 
-  }
+  }*/
 }

@@ -26,4 +26,9 @@ export class CreateNeighborhoodDto {
   @IsInt()
   @Min(1)
   numeroCasas: number;
+
+  @ApiProperty({ description: 'Número total vigilantes' })
+  @IsInt()
+  @Min(1)
+  numeroVigilantes: number;
 }

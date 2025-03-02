@@ -5,6 +5,8 @@ import { AuthModule } from './users/controllers/auth.module';
 import { NeighborhoodsModule } from './neighborhoods/controllers/neighborhoods.module';
 import { User } from './users/infrastructure/entities/user.entity';
 import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborhood.entity';
+import { Resident } from './residents/infrastructure/entities/resident.entity';
+import { ResidentsModule } from './residents/controllers/residents.module';
 
 @Module({
   imports: [
@@ -18,11 +20,12 @@ import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborho
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Neighborhood],
+      entities: [User, Neighborhood, Resident],
       synchronize: false,
     }),
     AuthModule,
     NeighborhoodsModule,
+    ResidentsModule
   ],
 })
 export class AppModule {}

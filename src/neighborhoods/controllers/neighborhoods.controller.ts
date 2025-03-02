@@ -34,6 +34,14 @@ export class NeighborhoodsController {
     return this.neighborhoodsService.getNeighborhoodsByOwner(ownerEmail);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Obtener residentes de las vecindades del usuario' })
+  @ApiResponse({ status: 200, description: 'Lista de recidentes de las vecindades del usuario.' })
+  async getUserNeighborhoodsResidents(@Request() req) {
+    const ownerEmail = req.user.email;
+    return this.neighborhoodsService.getResidentNeighborhoodsByOwner(ownerEmail);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar una vecindad' })
   @ApiResponse({ status: 200, description: 'Vecindad actualizada exitosamente.' })
