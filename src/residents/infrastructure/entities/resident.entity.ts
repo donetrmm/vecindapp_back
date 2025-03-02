@@ -31,10 +31,6 @@ export class Resident {
   @Column({ type: 'boolean', default: false })
   modoVisita: boolean;
 
-  @ApiProperty({ description: 'ID de Firebase Cloud Messaging (para notificaciones)' })
-  @Column({ nullable: true })
-  firebaseCMId: string;
-
   @ApiProperty({ description: 'Código de invitado único de 6 dígitos' })
   @Column({ unique: true, nullable: true, length: 6 })
   codigoInvitado: string;

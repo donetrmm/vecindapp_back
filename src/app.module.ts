@@ -7,6 +7,7 @@ import { User } from './users/infrastructure/entities/user.entity';
 import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborhood.entity';
 import { Resident } from './residents/infrastructure/entities/resident.entity';
 import { ResidentsModule } from './residents/controllers/residents.module';
+import { FcmToken } from './users/infrastructure/entities/fcm.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { ResidentsModule } from './residents/controllers/residents.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Neighborhood, Resident],
+      entities: [User, Neighborhood, Resident, FcmToken],
       synchronize: false,
     }),
     AuthModule,

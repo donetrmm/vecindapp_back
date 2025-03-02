@@ -4,7 +4,7 @@ import { Neighborhood } from 'src/neighborhoods/infrastructure/entities/neighbor
 import { User } from '../../users/infrastructure/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { ResidentsController } from './residents.controller';
-import { ResidentService } from '../services/residents.service';
+import { ResidentsService } from '../services/residents.service';
 import { Resident } from '../infrastructure/entities/resident.entity';
 
 @Module({
@@ -13,6 +13,6 @@ import { Resident } from '../infrastructure/entities/resident.entity';
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [ResidentsController],
-  providers: [ResidentService],
+  providers: [ResidentsService],
 })
 export class ResidentsModule {}

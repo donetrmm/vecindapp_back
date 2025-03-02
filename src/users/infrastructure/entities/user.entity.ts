@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { Neighborhood } from '../../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Resident } from '../../..//residents/infrastructure/entities/resident.entity';
+import { FcmToken } from './fcm.entity';
 
 @Entity('users')
 export class User {
@@ -12,6 +13,10 @@ export class User {
   @ApiProperty({ description: 'Password del usuario' })
   @Column()
   password: string;
+  
+  @ApiProperty({ description: 'Tokens de Firebase Cloud Messaging' })
+  @OneToMany(() => FcmToken, (fcmToken) => fcmToken.user, { cascade: true }) 
+  fcmTokens: FcmToken[];
 
   @OneToMany(() => Neighborhood, neighborhood => neighborhood.owner)
   neighborhoods: Neighborhood[];

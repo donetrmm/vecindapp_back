@@ -1,5 +1,5 @@
-import { Controller, Post, Body, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Body, UnauthorizedException, UsePipes, ValidationPipe, Patch, Request, Delete } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -27,5 +27,25 @@ export class AuthController {
       throw new UnauthorizedException('Credenciales inválidas');
     }
     return { access_token: token };
+  }
+
+  @ApiBearerAuth()
+  @Post('fcm-token')
+  async updateFcmToken(
+    @Request() req,
+    @Body() { fcmToken }: { fcmToken: string },
+  ) {
+    const userEmail = req.user.email; 
+    return this.authService.registerFcmToken(userEmail, fcmToken);  
+  }
+
+  @ApiBearerAuth()
+  @Delete('fcm-token')
+  async removeFcmToken(
+    @Request() req,
+    @Body() { fcmToken }: { fcmToken: string },
+  ) {
+    const userEmail = req.user.email;
+    return this.authService.removeFcmToken(userEmail, fcmToken);
   }
 }

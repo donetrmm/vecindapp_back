@@ -7,12 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../infrastructure/auth/jwt.strategy';
 import * as dotenv from 'dotenv';
+import { FcmToken } from '../infrastructure/entities/fcm.entity';
 
 dotenv.config();
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, FcmToken]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
