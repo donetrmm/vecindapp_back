@@ -5,6 +5,7 @@ import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborho
 import { Resident } from './residents/infrastructure/entities/resident.entity';
 import * as dotenv from 'dotenv';
 import { FcmToken } from './users/infrastructure/entities/fcm.entity';
+import { SecurityGuard } from './securityguard/infrastructure/entities/securityguard.entity';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  entities: [User, Neighborhood, Resident, FcmToken],
+  entities: [User, Neighborhood, Resident, FcmToken, SecurityGuard],
   migrations: ['src/migrations/*.ts'],
   synchronize: false,
 });

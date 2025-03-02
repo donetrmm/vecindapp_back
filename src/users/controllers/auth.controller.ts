@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UnauthorizedException, UsePipes, ValidationPipe, Patch, Request, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Post, Body, UnauthorizedException, UsePipes, ValidationPipe, Patch, Request, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Autenticación')
 @Controller('auth')
@@ -30,17 +31,39 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Post('fcm-token')
+  @ApiOperation({ summary: 'Actualizar el token FCM del usuario' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fcmToken: { type: 'string', description: 'Token de Firebase Cloud Messaging (FCM)' },
+      },
+      required: ['fcmToken'],
+    },
+  })
   async updateFcmToken(
     @Request() req,
     @Body() { fcmToken }: { fcmToken: string },
   ) {
-    const userEmail = req.user.email; 
-    return this.authService.registerFcmToken(userEmail, fcmToken);  
+    const userEmail = req.user.email;
+    return this.authService.registerFcmToken(userEmail, fcmToken);
   }
-
+  
   @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Delete('fcm-token')
+  @ApiOperation({ summary: 'Eliminar el token FCM del usuario' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fcmToken: { type: 'string', description: 'Token de Firebase Cloud Messaging (FCM)' },
+      },
+      required: ['fcmToken'],
+    },
+  })
   async removeFcmToken(
     @Request() req,
     @Body() { fcmToken }: { fcmToken: string },

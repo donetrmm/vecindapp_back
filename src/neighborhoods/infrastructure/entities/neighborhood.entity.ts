@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, BeforeIn
 import { User } from '../../../users/infrastructure/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Resident } from '../../../residents/infrastructure/entities/resident.entity';
+import { SecurityGuard } from '../../../securityguard/infrastructure/entities/securityguard.entity';
 
 @Entity('neighborhoods')
 export class Neighborhood {
@@ -52,6 +53,9 @@ export class Neighborhood {
   @ApiProperty({ description: 'Lista de residentes en la vecindad' })
   @OneToMany(() => Resident, (resident) => resident.neighborhood)
   residents: Resident[];
+
+  @OneToMany(() => SecurityGuard, (securityGuard) => securityGuard.neighborhood)
+  securityGuards: SecurityGuard[];
 /*
   @BeforeInsert()
   generateCodigo() {

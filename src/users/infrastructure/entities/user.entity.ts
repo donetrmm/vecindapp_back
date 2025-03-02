@@ -3,6 +3,7 @@ import { Neighborhood } from '../../../neighborhoods/infrastructure/entities/nei
 import { ApiProperty } from '@nestjs/swagger';
 import { Resident } from '../../..//residents/infrastructure/entities/resident.entity';
 import { FcmToken } from './fcm.entity';
+import { SecurityGuard } from '../../../securityguard/infrastructure/entities/securityguard.entity';
 
 @Entity('users')
 export class User {
@@ -25,4 +26,6 @@ export class User {
   @OneToMany(() => Resident, (resident) => resident.user)
   residents: Resident[];
 
+  @OneToMany(() => SecurityGuard, (securityGuard) => securityGuard.user)
+  securityGuards: SecurityGuard[];
 }

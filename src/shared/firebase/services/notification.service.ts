@@ -18,9 +18,8 @@ export class NotificationService {
       throw new BadRequestException('El token del dispositivo es obligatorio.');
     }
 
-    const message = {
+    const message: admin.messaging.Message = {
       notification: { title, body },
-      //android: { notification: { icon: 'ic_launcher' } }, // Icono fijo
       data: data || {},
       token,
     };
@@ -46,29 +45,42 @@ export class NotificationService {
     if (!tokens || tokens.length === 0) {
       throw new BadRequestException('Se requiere al menos un token de dispositivo.');
     }
-  
+
     let responses: admin.messaging.BatchResponse[] = [];
-  
+    let invalidTokens: string[] = [];
+
     for (let i = 0; i < tokens.length; i += this.MAX_TOKENS_PER_BATCH) {
       const batch = tokens.slice(i, i + this.MAX_TOKENS_PER_BATCH);
-  
-      const message = {
+
+      const message: admin.messaging.MulticastMessage = {
         notification: { title, body },
-        //android: { notification: { icon: 'ic_launcher' } },
         data: data || {},
         tokens: batch,
       };
-  
+
       try {
         const response = await firebaseApp.messaging().sendEachForMulticast(message);
         console.log(`✅ Notificación enviada a ${batch.length} dispositivos:`, response);
+
+        // Filtrar tokens inválidos o expirados
+        response.responses.forEach((res, index) => {
+          if (!res.success) {
+            console.error(`❌ Token inválido: ${batch[index]}`, res.error);
+            invalidTokens.push(batch[index]);
+          }
+        });
+
         responses.push(response);
       } catch (error) {
         console.error(`❌ Error enviando notificación al lote de ${batch.length}:`, error);
       }
     }
-  
-    return { success: true, message: 'Notificaciones enviadas en lotes', responses };
+
+    return { 
+      success: true, 
+      message: 'Notificaciones enviadas en lotes', 
+      responses, 
+      invalidTokens 
+    };
   }
-  
 }

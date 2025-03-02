@@ -2,10 +2,10 @@ import { Controller, Post, Body, UseGuards, Request, Get, Patch, UsePipes, Valid
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ResidentsService } from '../services/residents.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RegisterResidentDto } from '../dto/register-resident.dto';
-import { GenerateVisitCodeDto } from '../dto/generate-visit-code.dto';
-import { ToggleVisitModeDto } from '../dto/toggle-visit-mode.dto';
-import { UpdateResidentDto } from '../dto/update-resident.dto';
+import { RegisterResidentDto } from './dto/register-resident.dto';
+import { GenerateVisitCodeDto } from './dto/generate-visit-code.dto';
+import { ToggleVisitModeDto } from './dto/toggle-visit-mode.dto';
+import { UpdateResidentDto } from './dto/update-resident.dto';
 
 @ApiTags('Residentes')
 @ApiBearerAuth()

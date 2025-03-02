@@ -8,6 +8,8 @@ import { Neighborhood } from './neighborhoods/infrastructure/entities/neighborho
 import { Resident } from './residents/infrastructure/entities/resident.entity';
 import { ResidentsModule } from './residents/controllers/residents.module';
 import { FcmToken } from './users/infrastructure/entities/fcm.entity';
+import { SecurityGuard } from './securityguard/infrastructure/entities/securityguard.entity';
+import { SecurityGuardModule } from './securityguard/controllers/securityguard.module';
 
 @Module({
   imports: [
@@ -21,12 +23,13 @@ import { FcmToken } from './users/infrastructure/entities/fcm.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Neighborhood, Resident, FcmToken],
+      entities: [User, Neighborhood, Resident, FcmToken, SecurityGuard],
       synchronize: false,
     }),
     AuthModule,
     NeighborhoodsModule,
-    ResidentsModule
+    ResidentsModule,
+    SecurityGuardModule
   ],
 })
 export class AppModule {}

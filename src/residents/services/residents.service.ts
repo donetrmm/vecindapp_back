@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Resident } from '../infrastructure/entities/resident.entity';
 import { Neighborhood } from '../../neighborhoods/infrastructure/entities/neighborhood.entity';
-import { RegisterResidentDto } from '../dto/register-resident.dto';
-import { UpdateResidentDto } from '../dto/update-resident.dto';
+import { RegisterResidentDto } from '../controllers/dto/register-resident.dto';
+import { UpdateResidentDto } from '../controllers/dto/update-resident.dto';
 
 @Injectable()
 export class ResidentsService {
@@ -90,5 +90,19 @@ export class ResidentsService {
     const updatedResident = this.residentsRepository.merge(resident, updateDto);
     
     return this.residentsRepository.save(updatedResident);
+  }
+
+  async resetInvitationCode(residenciaId: number, ownerEmail: string): Promise<string> {
+    const resident = await this.residentsRepository.findOne({ 
+        where: { id: residenciaId }, 
+        relations: ['user']
+      });    
+    if (!resident) throw new NotFoundException('Residencia no encontrada');
+    if (resident.user.email !== ownerEmail) throw new ForbiddenException('No autorizado');
+  
+    resident.codigoInvitado = ""
+    await this.residentsRepository.save(resident);
+    
+    return resident.codigoInvitado;
   }
 }
