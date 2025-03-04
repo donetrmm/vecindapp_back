@@ -72,12 +72,23 @@ export class ResidentsService {
   }
 
   async getUserResidences(ownerEmail: string) {
-    return this.residentsRepository.find({ 
-        where: { 
-            user: { email: ownerEmail }
-        }
+    const residents = await this.residentsRepository.find({
+        where: { user: { email: ownerEmail } },
+        relations: ['neighborhood']
     });
-  }
+    
+    const newResidents = residents.map(resident => ({
+        id: resident.id,
+        calle: resident.calle,
+        numeroCasa: resident.numeroCasa,
+        nombreNeighborhood: resident.neighborhood.nombre,
+        modoVisita: resident.modoVisita,
+        codigoInvitado: resident.codigoInvitado
+    }));
+
+    return newResidents;
+}
+
 
   async updateResident(updateDto: UpdateResidentDto, ownerEmail: string) {
     const resident = await this.residentsRepository.findOne({ 
