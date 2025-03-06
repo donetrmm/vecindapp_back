@@ -60,10 +60,10 @@ export class SecurityGuardService {
   }
   
 
-  async notifyNeighborhood(neighborhoodId: number, title: string, message: string) {
+  async notifyNeighborhood(neighborhoodCode: string, title: string, message: string) {
     const neighborhood = await this.neighborhoodRepository.findOne({
-      where: { id: neighborhoodId },
-      relations: ['residents', 'residents.user', 'residents.user.fcmTokens'], // Agregamos los tokens FCM
+      where: { codigo: neighborhoodCode.toString() },
+      relations: ['residents', 'residents.user', 'residents.user.fcmTokens'],
     });
   
     if (!neighborhood) throw new NotFoundException('Vecindario no encontrado.');

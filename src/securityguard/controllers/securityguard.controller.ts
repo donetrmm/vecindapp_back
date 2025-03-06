@@ -79,9 +79,9 @@ import { ResidentsService } from 'src/residents/services/residents.service';
         return { message: '✅ Código verificado y residente notificado.' };
       }
   
-    @Post('notify-neighborhood/:neighborhoodId')
+    @Post('notify-neighborhood/:neighborhoodCode')
     @ApiOperation({ summary: 'Notificar a todos los miembros de un vecindario' })
-    @ApiParam({ name: 'neighborhoodId', type: Number, description: 'ID del vecindario' })
+    @ApiParam({ name: 'neighborhoodCode', type: Number, description: 'ID del vecindario' })
     @ApiBody({ 
       schema: { 
         type: 'object',
@@ -94,10 +94,10 @@ import { ResidentsService } from 'src/residents/services/residents.service';
     @ApiResponse({ status: 200, description: 'Notificación enviada a todos los miembros.' })
     @ApiResponse({ status: 404, description: 'Vecindario no encontrado.' })
     async notifyNeighborhood(
-      @Param('neighborhoodId') neighborhoodId: number,
+      @Param('neighborhoodCode') neighborhoodCode: string,
       @Body() body: { title: string; message: string }
     ) {
-      return this.securityGuardService.notifyNeighborhood(neighborhoodId, body.title, body.message);
+      return this.securityGuardService.notifyNeighborhood(neighborhoodCode, body.title, body.message);
     }
   }
   
