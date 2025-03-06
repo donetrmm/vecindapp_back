@@ -70,7 +70,7 @@ import { ResidentsService } from 'src/residents/services/residents.service';
           'Se ha registrado el ingreso de un invitado con tu código.'
         );
     
-        await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
+        //await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
     
         return { message: '✅ Código verificado y residente notificado.' };
       }
