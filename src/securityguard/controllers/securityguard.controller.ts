@@ -49,6 +49,10 @@ import { ResidentsService } from 'src/residents/services/residents.service';
     @ApiResponse({ status: 200, description: 'Código verificado y notificación enviada.' })
     @ApiResponse({ status: 404, description: 'Código no válido o usuario sin tokens FCM registrados.' })
     async verifyInviteCode(@Param('code') inviteCode: string) {
+
+        if (inviteCode.length !== 6) {
+          throw new NotFoundException('Código de invitado no válido.');
+        }
         const resident = await this.securityGuardService.verifyInviteCode(inviteCode);
         
         if (!resident) {
@@ -70,7 +74,7 @@ import { ResidentsService } from 'src/residents/services/residents.service';
           'Se ha registrado el ingreso de un invitado con tu código.'
         );
     
-        //await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
+        await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
     
         return { message: '✅ Código verificado y residente notificado.' };
       }

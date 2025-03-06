@@ -32,6 +32,6 @@ export class Resident {
   modoVisita: boolean;
 
   @ApiProperty({ description: 'Código de invitado único de 6 dígitos' })
-  @Column({ unique: true, nullable: true, length: 6 })
+  @Column({ nullable: true, length: 6 })
   codigoInvitado: string;
 }
