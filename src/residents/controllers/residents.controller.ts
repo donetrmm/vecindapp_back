@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Patch, UsePipes, ValidationPipe, Delete, Param } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ResidentsService } from '../services/residents.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -58,5 +58,13 @@ export class ResidentsController {
   async updateResident(@Request() req, @Body() updateDto: UpdateResidentDto) {
     const ownerEmail = req.user.email;
     return this.residentsService.updateResident(updateDto, ownerEmail);
+  }
+
+  @Delete('/:id')
+  @ApiOperation({ summary: 'Eliminar una residencia' })
+  @ApiResponse({ status: 200, description: 'Residencia eliminada exitosamente.' })
+  async deleteResidence(@Request() req, @Param('id') residenciaId: number) {
+    const ownerEmail = req.user.email;
+    return this.residentsService.deleteRegsitration(residenciaId, ownerEmail);
   }
 }

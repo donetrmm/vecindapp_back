@@ -36,6 +36,21 @@ export class ResidentsService {
     return this.residentsRepository.save(resident);
   }
 
+  async deleteRegsitration(residenciaId: number, ownerEmail: string) {
+    const resident = await this.residentsRepository.findOne({
+        where: { id: residenciaId },
+        relations: ['neighborhood', 'user']
+    });
+    if (!resident) throw new NotFoundException('Residencia no encontrada');
+    if (resident.user.email !== ownerEmail) throw new ForbiddenException('No autorizado');
+    const neighborhood = await this.neighborhoodsRepository.findOne({ where: { id: resident.neighborhood.id } });
+    if (!neighborhood) throw new NotFoundException('Vecindario no encontrado');
+    neighborhood.numeroCasasRegistradas--;
+    await this.neighborhoodsRepository.save(neighborhood);
+    await this.residentsRepository.remove(resident);
+    return { message: 'Residencia eliminada correctamente' };
+  }
+
   async generateVisitCode(residenciaId: number, ownerEmail: string): Promise<string> {
     const resident = await this.residentsRepository.findOne({ 
         where: { id: residenciaId }, 
