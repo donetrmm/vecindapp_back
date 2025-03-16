@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMan
 import { User } from '../../../users/infrastructure/entities/user.entity';
 import { Neighborhood } from '../../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { EntryLog } from '../../../securityguard/infrastructure/entities/entry-log.entity';
+import { EntryLog } from '../../../neighborhoods/infrastructure/entities/entry-log.entity';
 
 @Entity('residents')
 export class Resident {

@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ResidentsController } from './residents.controller';
 import { ResidentsService } from '../services/residents.service';
 import { Resident } from '../infrastructure/entities/resident.entity';
-import { EntryLog } from 'src/securityguard/infrastructure/entities/entry-log.entity';
+import { EntryLog } from 'src/neighborhoods/infrastructure/entities/entry-log.entity';
 
 @Module({
   imports: [

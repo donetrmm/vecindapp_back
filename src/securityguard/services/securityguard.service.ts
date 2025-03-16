@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, MoreThanOrEqual, Repository } from 'typeorm';
 import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
 import { User } from '../../users/infrastructure/entities/user.entity';
 import { Neighborhood } from '../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { Resident } from '../../residents/infrastructure/entities/resident.entity';
 import { NotificationService } from 'src/shared/firebase/services/notification.service';
 import { RegisterGuardDto } from '../controllers/dto/registerGuard.dto';
-import { EntryLog } from '../infrastructure/entities/entry-log.entity';
+import { EntryLog } from '../../neighborhoods/infrastructure/entities/entry-log.entity';
 import { CreateEntryLogDto } from '../controllers/dto/create-entry-log.dto';
 import { log } from 'console';
+import { SecurityGuardLog } from '../infrastructure/entities/securittGuardLog.entity';
 
 @Injectable()
 export class SecurityGuardService {
@@ -19,6 +20,7 @@ export class SecurityGuardService {
     @InjectRepository(Neighborhood) private neighborhoodRepository: Repository<Neighborhood>,
     @InjectRepository(Resident) private residentRepository: Repository<Resident>,
     @InjectRepository(EntryLog) private readonly entryLogRepository: Repository<EntryLog>,
+    @InjectRepository(SecurityGuardLog) private readonly guardLogRepository: Repository<SecurityGuardLog>,
     private notificationService: NotificationService
   ) {}
 
@@ -145,5 +147,52 @@ export class SecurityGuardService {
 
     const guard = await this.guardRepository.findOne({ where: { user, neighborhood } });
     return !!guard;
+  }
+
+  async registerEntry(email: string, neighborhoodId: number): Promise<SecurityGuardLog> {
+    const existingEntry = await this.guardLogRepository.findOne({
+      where: { email: email, salida: IsNull() },
+    });
+
+    if (existingEntry) {
+      throw new BadRequestException('El vigilante ya tiene una entrada activa sin registrar salida.');
+    }
+
+    const neighborhood = await this.neighborhoodRepository.findOne({ where: { id: neighborhoodId } });
+
+    if (!neighborhood) {
+      throw new  NotFoundException('Vecindario no encontrado.');
+    }
+
+    const newLog = this.guardLogRepository.create({ email, entrada: new Date(), vecindario: neighborhood });
+    return this.guardLogRepository.save(newLog);
+  }
+
+  async registerExit(email: string): Promise<SecurityGuardLog> {
+    const existingEntry = await this.guardLogRepository.findOne({
+      where: { email, salida: IsNull() },
+      relations: ['vecindario'],
+    });
+
+    if (!existingEntry) {
+      throw new NotFoundException('No hay entrada activa para este vigilante.');
+    }
+
+    existingEntry.salida = new Date();
+    return this.guardLogRepository.save(existingEntry);
+  }
+
+  async getLogsByGuard(email: string): Promise<SecurityGuardLog[]> {
+    return this.guardLogRepository.find({
+      where: { email },
+      order: { entrada: 'DESC' },
+    });
+  }
+
+  async getLogsByNeighborhood(neighborhoodId: number): Promise<SecurityGuardLog[]> {
+    return this.guardLogRepository.find({
+      where: { vecindario: { id: neighborhoodId } },
+      order: { entrada: 'DESC' },
+    });
   }
 }

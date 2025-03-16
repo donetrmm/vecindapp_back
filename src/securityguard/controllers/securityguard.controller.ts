@@ -11,7 +11,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ResidentsService } from 'src/residents/services/residents.service';
 import { CreateEntryLogDto } from './dto/create-entry-log.dto';
-import { EntryLog } from '../infrastructure/entities/entry-log.entity';
+import { EntryLog } from '../../neighborhoods/infrastructure/entities/entry-log.entity';
+import { SecurityGuardLog } from '../infrastructure/entities/securittGuardLog.entity';
+import { CreateGuardLogDto } from './dto/create-guard-log.dto';
   
   @ApiTags('Security Guards') 
   @Controller('security-guards')
@@ -128,5 +130,35 @@ import { EntryLog } from '../infrastructure/entities/entry-log.entity';
     async getAll(@Param('idVecindario') idVecindario: number): Promise<EntryLog[]> {
       return this.securityGuardService.getAllLogs(idVecindario);
     }
+
+    @Post('/guard/entry')
+    @ApiOperation({ summary: 'Registrar la entrada de un vigilante' })
+    @ApiResponse({ status: 201, description: 'Entrada registrada exitosamente.', type: SecurityGuardLog })
+    async registerEntry(@Request() req, @Body() createGuardEntryLog: CreateGuardLogDto): Promise<SecurityGuardLog> {
+      return this.securityGuardService.registerEntry(req.user.email, createGuardEntryLog.neighborhoodId);
+    }
+  
+    @Post('/guard/exit')
+    @ApiOperation({ summary: 'Registrar la salida de un vigilante' })
+    @ApiResponse({ status: 200, description: 'Salida registrada exitosamente.', type: SecurityGuardLog })
+    async registerExit(@Request() req): Promise<SecurityGuardLog> {
+      return this.securityGuardService.registerExit(req.user.email);
+    }
+  
+    @Get('/guard/log')
+    @ApiOperation({ summary: 'Obtener registros de un vigilante' })
+    @ApiResponse({ status: 200, description: 'Lista de registros', type: [SecurityGuardLog] })
+    async getLogsByGuard(@Request() req): Promise<SecurityGuardLog[]> {
+      const email = req.user.email;
+      return this.securityGuardService.getLogsByGuard(email);
+    }
+  
+    @Get('/guard/neighborhood/:neighborhoodId')
+    @ApiOperation({ summary: 'Obtener registros por vecindario' })
+    @ApiResponse({ status: 200, description: 'Lista de registros', type: [SecurityGuardLog] })
+    async getLogsByNeighborhood(@Param('neighborhoodId') neighborhoodId: number): Promise<SecurityGuardLog[]> {
+      return this.securityGuardService.getLogsByNeighborhood(neighborhoodId);
+    }
   }
+  
   
