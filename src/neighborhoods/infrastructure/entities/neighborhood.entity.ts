@@ -3,6 +3,7 @@ import { User } from '../../../users/infrastructure/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Resident } from '../../../residents/infrastructure/entities/resident.entity';
 import { SecurityGuard } from '../../../securityguard/infrastructure/entities/securityguard.entity';
+import { EntryLog } from '../../../securityguard/infrastructure/entities/entry-log.entity';
 
 @Entity('neighborhoods')
 export class Neighborhood {
@@ -56,6 +57,10 @@ export class Neighborhood {
 
   @OneToMany(() => SecurityGuard, (securityGuard) => securityGuard.neighborhood)
   securityGuards: SecurityGuard[];
+
+  @OneToMany(() => EntryLog, (entryLog) => entryLog.vecindario)
+  @ApiProperty({ description: 'Registros de entradas asociados al vecindario', type: () => EntryLog, isArray: true })
+    entryLogs: EntryLog[];
 /*
   @BeforeInsert()
   generateCodigo() {

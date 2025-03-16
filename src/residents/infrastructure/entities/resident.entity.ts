@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from '../../../users/infrastructure/entities/user.entity';
 import { Neighborhood } from '../../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { EntryLog } from '../../../securityguard/infrastructure/entities/entry-log.entity';
 
 @Entity('residents')
 export class Resident {

@@ -8,10 +8,11 @@ import { Resident } from '../../residents/infrastructure/entities/resident.entit
 import { User } from '../../users/infrastructure/entities/user.entity';
 import { NotificationService } from 'src/shared/firebase/services/notification.service';
 import { ResidentsService } from '../../residents/services/residents.service';
+import { EntryLog } from '../infrastructure/entities/entry-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SecurityGuard, Neighborhood, Resident, User]),
+    TypeOrmModule.forFeature([SecurityGuard, Neighborhood, Resident, User, EntryLog]),
   ],
   controllers: [SecurityGuardController],
   providers: [SecurityGuardService, NotificationService, ResidentsService],

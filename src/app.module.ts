@@ -10,6 +10,7 @@ import { ResidentsModule } from './residents/controllers/residents.module';
 import { FcmToken } from './users/infrastructure/entities/fcm.entity';
 import { SecurityGuard } from './securityguard/infrastructure/entities/securityguard.entity';
 import { SecurityGuardModule } from './securityguard/controllers/securityguard.module';
+import { EntryLog } from './securityguard/infrastructure/entities/entry-log.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { SecurityGuardModule } from './securityguard/controllers/securityguard.m
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Neighborhood, Resident, FcmToken, SecurityGuard],
+      entities: [User, Neighborhood, Resident, FcmToken, SecurityGuard, EntryLog],
       synchronize: false,
     }),
     AuthModule,

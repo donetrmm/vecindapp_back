@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
 import { User } from '../../users/infrastructure/entities/user.entity';
 import { Neighborhood } from '../../neighborhoods/infrastructure/entities/neighborhood.entity';
 import { Resident } from '../../residents/infrastructure/entities/resident.entity';
 import { NotificationService } from 'src/shared/firebase/services/notification.service';
 import { RegisterGuardDto } from '../controllers/dto/registerGuard.dto';
+import { EntryLog } from '../infrastructure/entities/entry-log.entity';
+import { CreateEntryLogDto } from '../controllers/dto/create-entry-log.dto';
+import { log } from 'console';
 
 @Injectable()
 export class SecurityGuardService {
@@ -15,6 +18,7 @@ export class SecurityGuardService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Neighborhood) private neighborhoodRepository: Repository<Neighborhood>,
     @InjectRepository(Resident) private residentRepository: Repository<Resident>,
+    @InjectRepository(EntryLog) private readonly entryLogRepository: Repository<EntryLog>,
     private notificationService: NotificationService
   ) {}
 
@@ -82,4 +86,64 @@ export class SecurityGuardService {
     return { message: 'Notificación enviada a todos los miembros del vecindario.' };
   }
   
+  async createLog(createEntryLogDto: CreateEntryLogDto): Promise<any> {
+    console.log(createEntryLogDto);
+
+    const residence = await this.residentRepository.findOne({
+      where: { id: parseInt(createEntryLogDto.idResidencia) },
+      relations: ['neighborhood'],
+    });
+    
+    if (!residence) {
+      throw new NotFoundException('Residencia no encontrada.');
+    }
+
+    const neighborhood = await this.neighborhoodRepository.findOne({
+      where: { id: residence.neighborhood.id },
+    });
+
+    if (!neighborhood) {
+      throw new NotFoundException('Vecindario no encontrado.');
+    }
+
+    const newEntry = this.entryLogRepository.create({
+      ...createEntryLogDto,
+      vecindario: neighborhood,
+      residencia: createEntryLogDto.idResidencia,
+    });
+
+    const logSaved = await this.entryLogRepository.save(newEntry);
+    return {
+      nombre: logSaved.nombre,
+      fechaEntrada: logSaved.fechaEntrada,
+      placaCarro: logSaved.placaCarro,
+      vigilante: logSaved.vigilante,
+      residencia: logSaved.residencia,
+      vecindario: logSaved.vecindario.id,
+      id: logSaved.id,
+    }
+  }
+
+  async getLogByResidence(idResidencia: string): Promise<EntryLog[]> {
+    return this.entryLogRepository.find({
+      where: { residencia: idResidencia },
+    });
+  }
+
+  async getAllLogs(idVecindario: number): Promise<EntryLog[]> {
+    return this.entryLogRepository.find({
+      where: { vecindario: { id: idVecindario } },
+    });
+  }
+
+  async verifySecurityGuard(userEmail: string, neighborhoodId: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { email: userEmail } });
+    if (!user) return false;
+
+    const neighborhood = await this.neighborhoodRepository.findOne({ where: { id: parseInt(neighborhoodId) } });
+    if (!neighborhood) return false;
+
+    const guard = await this.guardRepository.findOne({ where: { user, neighborhood } });
+    return !!guard;
+  }
 }

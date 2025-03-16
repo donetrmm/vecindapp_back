@@ -1,7 +1,8 @@
 import { 
     Controller, Post, Delete, Body, Param, NotFoundException, 
     Request,
-    UseGuards
+    UseGuards,
+    Get
   } from '@nestjs/common';
   import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
   import { SecurityGuardService } from '../services/securityguard.service';
@@ -9,6 +10,8 @@ import {
   import { NotificationService } from 'src/shared/firebase/services/notification.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ResidentsService } from 'src/residents/services/residents.service';
+import { CreateEntryLogDto } from './dto/create-entry-log.dto';
+import { EntryLog } from '../infrastructure/entities/entry-log.entity';
   
   @ApiTags('Security Guards') 
   @Controller('security-guards')
@@ -18,7 +21,7 @@ import { ResidentsService } from 'src/residents/services/residents.service';
     constructor(
       private readonly securityGuardService: SecurityGuardService,
       private readonly notificationService: NotificationService,
-      private readonly residentsService: ResidentsService
+      private readonly residentsService: ResidentsService,
     ) {}
   
   
@@ -48,8 +51,7 @@ import { ResidentsService } from 'src/residents/services/residents.service';
     @ApiParam({ name: 'code', type: String, description: 'Código de invitado a verificar' })
     @ApiResponse({ status: 200, description: 'Código verificado y notificación enviada.' })
     @ApiResponse({ status: 404, description: 'Código no válido o usuario sin tokens FCM registrados.' })
-    async verifyInviteCode(@Param('code') inviteCode: string) {
-
+    async verifyInviteCode(@Request() req, @Param('code') inviteCode: string) {
         if (inviteCode.length !== 6) {
           throw new NotFoundException('Código de invitado no válido.');
         }
@@ -58,7 +60,7 @@ import { ResidentsService } from 'src/residents/services/residents.service';
         if (!resident) {
           throw new NotFoundException('Código de invitado no válido.');
         }
-    
+        
         const fcmTokens = resident.user.fcmTokens.map(token => token.token);
     
         if (!fcmTokens.length) {
@@ -98,6 +100,33 @@ import { ResidentsService } from 'src/residents/services/residents.service';
       @Body() body: { title: string; message: string }
     ) {
       return this.securityGuardService.notifyNeighborhood(neighborhoodCode, body.title, body.message);
+    }
+
+    @Post('/log')
+    @ApiOperation({ summary: 'Registrar una nueva entrada' })
+    @ApiResponse({ status: 201, description: 'Entrada registrada exitosamente.', type: EntryLog })
+    async createLog(@Request() req, @Body() createEntryLogDto: CreateEntryLogDto): Promise<EntryLog> {
+      const createLog = {
+        ...createEntryLogDto,
+        vigilante: req.user.email,
+        fechaEntrada: new Date(),
+      };
+  
+      return this.securityGuardService.createLog(createLog);
+    }
+  
+    @Get('/log/residence/:idResidencia')
+    @ApiOperation({ summary: 'Obtener registros de entradas por residencia' })
+    @ApiResponse({ status: 200, description: 'Lista de registros de entrada', type: [EntryLog] })
+    async getByResidence(@Param('idResidencia') idResidencia: string): Promise<EntryLog[]> {
+      return this.securityGuardService.getLogByResidence(idResidencia);
+    }
+  
+    @Get('/log/neighborhood/:idVecindario')
+    @ApiOperation({ summary: 'Obtener todos los registros del vecindario' })
+    @ApiResponse({ status: 200, description: 'Lista de registros de entrada en el vecindario', type: [EntryLog] })
+    async getAll(@Param('idVecindario') idVecindario: number): Promise<EntryLog[]> {
+      return this.securityGuardService.getAllLogs(idVecindario);
     }
   }
   

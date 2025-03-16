@@ -6,10 +6,11 @@ import { PassportModule } from '@nestjs/passport';
 import { ResidentsController } from './residents.controller';
 import { ResidentsService } from '../services/residents.service';
 import { Resident } from '../infrastructure/entities/resident.entity';
+import { EntryLog } from 'src/securityguard/infrastructure/entities/entry-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Neighborhood, User, Resident]),
+    TypeOrmModule.forFeature([Neighborhood, User, Resident, EntryLog]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [ResidentsController],
