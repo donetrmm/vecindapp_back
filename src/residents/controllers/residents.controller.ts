@@ -6,6 +6,7 @@ import { RegisterResidentDto } from './dto/register-resident.dto';
 import { GenerateVisitCodeDto } from './dto/generate-visit-code.dto';
 import { ToggleVisitModeDto } from './dto/toggle-visit-mode.dto';
 import { UpdateResidentDto } from './dto/update-resident.dto';
+import { GenerateMultipleCodesDto } from './dto/generate-multiple-codes.dto';
 
 @ApiTags('Residentes')
 @ApiBearerAuth()
@@ -31,6 +32,16 @@ export class ResidentsController {
   async generateVisitCode(@Request() req, @Body() dto: GenerateVisitCodeDto) {
     const ownerEmail = req.user.email;
     const visitCode = await this.residentsService.generateVisitCode(dto.residenciaId, ownerEmail);
+    return { codigoInvitado: visitCode };
+  }
+
+  @Post('/generate-multiple-codes')
+  @ApiOperation({ summary: 'Generar multiples códigos de visita' })
+  @ApiResponse({ status: 201, description: 'Códigos de visita generados exitosamente.' })
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async generateMultipleVisiteCodes(@Request() req, @Body() dto: GenerateMultipleCodesDto) {
+    const ownerEmail = req.user.email;
+    const visitCode = await this.residentsService.generateMultipleVisitCode(dto.residenciaId, ownerEmail, dto.usos);
     return { codigoInvitado: visitCode };
   }
 

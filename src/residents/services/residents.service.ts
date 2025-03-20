@@ -68,6 +68,7 @@ export class ResidentsService {
     } while (!isUnique);
   
     resident.codigoInvitado = uniqueCode;
+    resident.usosCodigo = 1;
     await this.residentsRepository.save(resident);
     
     return resident.codigoInvitado;
@@ -125,8 +126,36 @@ export class ResidentsService {
       });    
     if (!resident) throw new NotFoundException('Residencia no encontrada');
     if (resident.user.email !== ownerEmail) throw new ForbiddenException('No autorizado');
+    
+    if (resident.usosCodigo == 1) {
+      resident.codigoInvitado = ""
+      resident.usosCodigo = 0;
+    } else {
+      resident.usosCodigo--;
+    }
+    await this.residentsRepository.save(resident);
+    
+    return resident.codigoInvitado;
+  }
+
+  async generateMultipleVisitCode(residenciaId: number, ownerEmail: string, usos: number): Promise<string> {
+    const resident = await this.residentsRepository.findOne({ 
+        where: { id: residenciaId }, 
+        relations: ['user']
+      });    
+    if (!resident) throw new NotFoundException('Residencia no encontrada');
+    if (resident.user.email !== ownerEmail) throw new ForbiddenException('No autorizado');
+    let uniqueCode: string;
+    let isUnique = false;
   
-    resident.codigoInvitado = ""
+    do {
+      uniqueCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const existingResident = await this.residentsRepository.findOne({ where: { codigoInvitado: uniqueCode } });
+      if (!existingResident) isUnique = true;
+    } while (!isUnique);
+  
+    resident.codigoInvitado = uniqueCode;
+    resident.usosCodigo = usos;
     await this.residentsRepository.save(resident);
     
     return resident.codigoInvitado;

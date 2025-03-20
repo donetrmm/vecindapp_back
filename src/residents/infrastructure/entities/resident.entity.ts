@@ -35,4 +35,8 @@ export class Resident {
   @ApiProperty({ description: 'Código de invitado único de 6 dígitos' })
   @Column({ nullable: true, length: 6 })
   codigoInvitado: string;
+
+  @ApiProperty({ description: 'Usos del código' })
+  @Column({ type: 'integer', default: 0 })
+  usosCodigo: number;
 }
