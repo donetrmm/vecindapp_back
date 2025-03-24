@@ -195,4 +195,17 @@ export class SecurityGuardService {
       order: { entrada: 'DESC' },
     });
   }
+
+  async getNeighborhoodGuards(email: string): Promise<any> {
+    const guard = await this.guardRepository.find({
+      where: { user: { email } },
+      relations: ['neighborhood'],
+    });
+    
+    if (!guard) throw new NotFoundException('Guardia no encontrado.');
+
+    const neighborhoods = guard.map((guard) => guard.neighborhood);
+
+    return neighborhoods;
+  }  
 }

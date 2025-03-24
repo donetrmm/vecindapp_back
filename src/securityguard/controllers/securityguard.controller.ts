@@ -14,6 +14,7 @@ import { CreateEntryLogDto } from './dto/create-entry-log.dto';
 import { EntryLog } from '../../neighborhoods/infrastructure/entities/entry-log.entity';
 import { SecurityGuardLog } from '../infrastructure/entities/securittGuardLog.entity';
 import { CreateGuardLogDto } from './dto/create-guard-log.dto';
+import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
   
   @ApiTags('Security Guards') 
   @Controller('security-guards')
@@ -80,7 +81,7 @@ import { CreateGuardLogDto } from './dto/create-guard-log.dto';
     
         await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
     
-        return { message: '✅ Código verificado y residente notificado.' };
+        return { message: '✅ Código verificado y residente notificado.', residentId: resident.id };
       }
   
     @Post('notify-neighborhood/:neighborhoodCode')
@@ -158,6 +159,15 @@ import { CreateGuardLogDto } from './dto/create-guard-log.dto';
     @ApiResponse({ status: 200, description: 'Lista de registros', type: [SecurityGuardLog] })
     async getLogsByNeighborhood(@Param('neighborhoodId') neighborhoodId: number): Promise<SecurityGuardLog[]> {
       return this.securityGuardService.getLogsByNeighborhood(neighborhoodId);
+    }
+
+    @Get('/neighborhood')
+    @ApiOperation({ summary: 'Obtener vecindarios' })
+    @ApiResponse({ status: 200, description: 'Lista de vecindarios' })
+    async getNeighborhoods(@Request() req): Promise<any> {
+      const email = req.user.email;
+      const guard = this.securityGuardService.getNeighborhoodGuards(email);
+      return guard;
     }
   }
   

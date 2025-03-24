@@ -42,9 +42,9 @@ export class ResidentsService {
         relations: ['neighborhood', 'user']
     });
     if (!resident) throw new NotFoundException('Residencia no encontrada');
-    if (resident.user.email !== ownerEmail) throw new ForbiddenException('No autorizado');
-    const neighborhood = await this.neighborhoodsRepository.findOne({ where: { id: resident.neighborhood.id } });
+    const neighborhood = await this.neighborhoodsRepository.findOne({ where: { id: resident.neighborhood.id }, relations: ['owner'] });
     if (!neighborhood) throw new NotFoundException('Vecindario no encontrado');
+    if (resident.user.email !== ownerEmail && neighborhood.owner.email !== ownerEmail) throw new ForbiddenException('No autorizado');
     neighborhood.numeroCasasRegistradas--;
     await this.neighborhoodsRepository.save(neighborhood);
     await this.residentsRepository.remove(resident);
