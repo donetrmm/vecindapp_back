@@ -22,7 +22,9 @@ export class ResidentsController {
   
   async register(@Request() req, @Body() registerDto: RegisterResidentDto) {
     const ownerEmail = req.user.email;
-    return this.residentsService.registerResident(registerDto, ownerEmail);
+    const residence = await this.residentsService.registerResident(registerDto, ownerEmail);
+    residence.codigoInvitado = ""
+    return residence;
   }
 
   @Post('/generate-visit-code')
