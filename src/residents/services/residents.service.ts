@@ -99,7 +99,8 @@ export class ResidentsService {
         numeroCasa: resident.numeroCasa,
         nombreNeighborhood: resident.neighborhood.nombre,
         modoVisita: resident.modoVisita,
-        codigoInvitado: resident.codigoInvitado
+        codigoInvitado: resident.codigoInvitado,
+        codeUses: resident.usosCodigo
     }));
 
     return newResidents;
