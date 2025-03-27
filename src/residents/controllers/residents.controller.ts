@@ -64,6 +64,14 @@ export class ResidentsController {
     return this.residentsService.getUserResidences(ownerEmail);
   }
 
+  @Get('/:residenceId')
+  @ApiOperation({ summary: 'Obtener residencias del usuario' })
+  @ApiResponse({ status: 200, description: 'Lista de residencias del usuario.' })
+  async getUserResidenceById(@Request() req, @Param('residenceId') residenciaId: number) {
+    const ownerEmail = req.user.email;
+    return this.residentsService.getUserResidencesById(ownerEmail, residenciaId);
+  }
+
   @Patch('/:id')
   @ApiOperation({ summary: 'Actualizar datos de una residencia' })
   @ApiResponse({ status: 200, description: 'Residencia actualizada exitosamente.' })

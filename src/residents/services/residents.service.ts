@@ -104,7 +104,28 @@ export class ResidentsService {
     }));
 
     return newResidents;
-}
+  }
+
+  async getUserResidencesById(ownerEmail: string, id: number) {
+    const resident = await this.residentsRepository.findOne({
+        where: { user: { email: ownerEmail }, id: id },
+        relations: ['neighborhood']
+    });
+
+    if (!resident) throw new NotFoundException('Residencia no encontrada');
+    
+    const newResident = {
+        id: resident.id,
+        calle: resident.calle,
+        numeroCasa: resident.numeroCasa,
+        nombreNeighborhood: resident.neighborhood.nombre,
+        modoVisita: resident.modoVisita,
+        codigoInvitado: resident.codigoInvitado,
+        codeUses: resident.usosCodigo
+    };
+
+    return newResident;
+  }
 
 
   async updateResident(updateDto: UpdateResidentDto, ownerEmail: string) {
