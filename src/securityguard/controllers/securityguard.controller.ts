@@ -92,7 +92,7 @@ import { QrService } from 'src/shared/firebase/services/qr.service';
   
     @Post('notify-neighborhood/:neighborhoodCode')
     @ApiOperation({ summary: 'Notificar a todos los miembros de un vecindario' })
-    @ApiParam({ name: 'neighborhoodCode', type: Number, description: 'ID del vecindario' })
+    @ApiParam({ name: 'neighborhoodCode', type: String, description: 'Código del vecindario' })
     @ApiBody({ 
       schema: { 
         type: 'object',
