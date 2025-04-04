@@ -72,7 +72,9 @@ import { QrService } from 'src/shared/firebase/services/qr.service';
     
         if (!fcmTokens.length) {
           await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
-          throw new NotFoundException('Código válido, pero el usuario no tiene tokens FCM registrados.');
+          console.log('Código válido, pero el usuario no tiene tokens FCM registrados.');
+          await this.residentsService.resetInvitationCode(resident.id, resident.user.email);
+          return { message: '✅ Código verificado y el residete no fue notificado.', residentId: resident.id };
         }
     
         console.log('✅ Enviando notificación a:', fcmTokens);
