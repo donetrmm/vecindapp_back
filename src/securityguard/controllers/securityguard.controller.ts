@@ -15,6 +15,7 @@ import { EntryLog } from '../../neighborhoods/infrastructure/entities/entry-log.
 import { SecurityGuardLog } from '../infrastructure/entities/securittGuardLog.entity';
 import { CreateGuardLogDto } from './dto/create-guard-log.dto';
 import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
+import { QrService } from 'src/shared/firebase/services/qr.service';
   
   @ApiTags('Security Guards') 
   @Controller('security-guards')
@@ -25,6 +26,8 @@ import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
       private readonly securityGuardService: SecurityGuardService,
       private readonly notificationService: NotificationService,
       private readonly residentsService: ResidentsService,
+      private readonly qrService: QrService,
+      
     ) {}
   
   
@@ -55,6 +58,7 @@ import { SecurityGuard } from '../infrastructure/entities/securityguard.entity';
     @ApiResponse({ status: 200, description: 'Código verificado y notificación enviada.' })
     @ApiResponse({ status: 404, description: 'Código no válido o usuario sin tokens FCM registrados.' })
     async verifyInviteCode(@Request() req, @Param('code') inviteCode: string) {
+        inviteCode = await this.qrService.decodeQrCode(inviteCode);
         if (inviteCode.length !== 6) {
           throw new NotFoundException('Código de invitado no válido.');
         }
