@@ -80,7 +80,7 @@ export class SecurityGuardService {
       .filter(token => token);                     
   
     if (!fcmTokens.length) {
-      throw new NotFoundException('No hay dispositivos registrados para recibir la notificación.');
+      return { message: 'No hay dispositivos registrados para recibir la notificación.' };
     }
   
     await this.notificationService.sendNotificationToMultipleDevices(fcmTokens, title, message);
