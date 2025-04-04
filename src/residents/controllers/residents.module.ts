@@ -7,6 +7,7 @@ import { ResidentsController } from './residents.controller';
 import { ResidentsService } from '../services/residents.service';
 import { Resident } from '../infrastructure/entities/resident.entity';
 import { EntryLog } from 'src/neighborhoods/infrastructure/entities/entry-log.entity';
+import { QrService } from 'src/shared/firebase/services/qr.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { EntryLog } from 'src/neighborhoods/infrastructure/entities/entry-log.en
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [ResidentsController],
-  providers: [ResidentsService],
+  providers: [ResidentsService, QrService],
 })
 export class ResidentsModule {}

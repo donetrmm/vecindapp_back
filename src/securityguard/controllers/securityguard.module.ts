@@ -10,13 +10,14 @@ import { NotificationService } from 'src/shared/firebase/services/notification.s
 import { ResidentsService } from '../../residents/services/residents.service';
 import { EntryLog } from '../../neighborhoods/infrastructure/entities/entry-log.entity';
 import { SecurityGuardLog } from '../infrastructure/entities/securittGuardLog.entity';
+import { QrService } from 'src/shared/firebase/services/qr.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SecurityGuard, Neighborhood, Resident, User, EntryLog, SecurityGuardLog]),
   ],
   controllers: [SecurityGuardController],
-  providers: [SecurityGuardService, NotificationService, ResidentsService],
+  providers: [SecurityGuardService, NotificationService, ResidentsService, QrService],
   exports: [SecurityGuardService],
 })
 export class SecurityGuardModule {}
