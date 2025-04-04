@@ -6,6 +6,7 @@ const { Jimp } = require("jimp");
 export class QrService {
   async generateQrCode(text: string): Promise<string> {
     try {
+      console.log(text)
       const qrBuffer = await QRCode.toBuffer(text, {
         errorCorrectionLevel: 'H',
         type: 'png',

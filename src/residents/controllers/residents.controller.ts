@@ -99,7 +99,21 @@ export class ResidentsController {
   })
   async getUserResidences(@Request() req) {
     const ownerEmail = req.user.email;
-    return this.residentsService.getUserResidences(ownerEmail);
+    const residences = await this.residentsService.getUserResidences(ownerEmail);
+    
+    const residencesWithQR = await Promise.all(residences.map(async (residence) => {
+      const visitCode = residence.codigoInvitado;
+      if (!visitCode) {
+        return residence;
+      }
+      const qrCode = await this.qrService.generateQrCode(visitCode);
+      return {
+        ...residence,
+        qrBase64: qrCode
+      };
+    }));
+    
+    return residencesWithQR;
   }
 
   @Get('/:residenceId')
