@@ -59,21 +59,14 @@ import { QrService } from 'src/shared/firebase/services/qr.service';
     @ApiResponse({ status: 404, description: 'Código no válido o usuario sin tokens FCM registrados.' })
     async verifyInviteCode(@Request() req, @Param('code') inviteCode: string) {
         console.log('Código de invitado recibido:', inviteCode);
-        const inviteCodeAux = inviteCode;
-        try{inviteCode = await this.qrService.decodeQrCode(inviteCode);} catch (error) {
-          console.error('Error al decodificar el código QR:', error);
-        }
-
+        //inviteCode = await this.qrService.decodeQrCode(inviteCode);
         if (inviteCode.length !== 6) {
           throw new NotFoundException('Código de invitado no válido.');
         }
-        var resident = await this.securityGuardService.verifyInviteCode(inviteCode);
+        const resident = await this.securityGuardService.verifyInviteCode(inviteCode);
         
         if (!resident) {
-          resident = await this.securityGuardService.verifyInviteCode(inviteCodeAux);
-          if (!resident){
-            throw new NotFoundException('Código de invitado no válido.');
-          }
+          throw new NotFoundException('Código de invitado no válido.');
         }
         
         const fcmTokens = resident.user.fcmTokens.map(token => token.token);
