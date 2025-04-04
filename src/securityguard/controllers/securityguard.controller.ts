@@ -60,7 +60,9 @@ import { QrService } from 'src/shared/firebase/services/qr.service';
     async verifyInviteCode(@Request() req, @Param('code') inviteCode: string) {
         console.log('Código de invitado recibido:', inviteCode);
         const inviteCodeAux = inviteCode;
-        inviteCode = await this.qrService.decodeQrCode(inviteCode);
+        try{inviteCode = await this.qrService.decodeQrCode(inviteCode);} catch (error) {
+          console.error('Error al decodificar el código QR:', error);
+        }
 
         if (inviteCode.length !== 6) {
           throw new NotFoundException('Código de invitado no válido.');
